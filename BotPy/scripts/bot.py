@@ -1,7 +1,9 @@
 '''
 Main Script for running the bot with discord.py
-@bug
-@todo
+
+@bug none
+
+@todo Implement Better Command Parsing, as well as more commands
 '''
 import discord
 import subprocess
@@ -16,7 +18,7 @@ import os
 # secrets.txt should contain only two lines, the first being the bot token, and the second being the client secret
 secrets = open('secrets.txt', 'r')
 BOT_TOKEN = secrets.readline()
-CLIENT_SECRET = str(secrets.readline())
+CLIENT_SECRET = secrets.readline()
 secrets.close()
 
 # Stripping Trailing Newline char from BOT_TOKEN
@@ -26,7 +28,6 @@ BOT_TOKEN = BOT_TOKEN.rstrip()
 client = discord.Client()
 
 abs_path = os.path.abspath(r"..\..\Processing\maze_gen")  # Windows Path
-print(abs_path)
 
 
 @client.event
@@ -38,7 +39,7 @@ async def on_ready():
 async def on_message(message):
     print(f"{message.channel}: {message.author.name}: {message.content}")
 
-    if "!maze" in message.content.lower():
+    if "!maze" == message.content.lower():
         await message.channel.send("Generating Maze...")
         p = subprocess.Popen(f'processing-java --sketch="{abs_path}" --run', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         #out = p.stdout.read().split('\r\n')
