@@ -1,3 +1,8 @@
+'''
+Main Script for running the bot with discord.py
+@bug
+@todo
+'''
 import discord
 import subprocess
 import os
