@@ -1,23 +1,16 @@
 ArrayList<Cell> grid;
 ArrayList<Cell> stack;
-ArrayList<Cell> openset;
-ArrayList<Cell> closedset;
-ArrayList<Cell> path;
+
 
 int w = 3; //Defines size of cell in pixels
 int cols;
 int rows;
 Boolean click = false;
-Boolean USEASTAR = false; //USE THIS TO DISABLE ASTAR
 Cell current;
 Cell start;
 Cell end;
 
 
-//Cell grid = new LinkedList();
-
-//stack = new ArrayList<Cell>();
-//Cell[][] grid = new Cell[cols][rows];
 void setup(){
   //size(1080, 2220); //Phone
   size(1000,1000);
@@ -27,9 +20,7 @@ void setup(){
   rows = floor(height/w);
   grid = new ArrayList<Cell>();
   stack = new ArrayList<Cell>();
-  openset = new ArrayList<Cell>();
-  closedset = new ArrayList<Cell>();
-  path = new ArrayList<Cell>();
+
   /*Grid init*/
   for (int j = 0; j < rows; j++){
     for(int i= 0; i < cols; i++){
@@ -40,15 +31,7 @@ void setup(){
   //int r = 0;
   current = grid.get(r);
   
-  //A* cell inits
-  start = grid.get(0);
-  end = grid.get(index(cols - 1, rows - 1));
   
-  openset.add(start);
-  /* a_neighbor init*/
-  for (int i = 0; i < grid.size(); i++){
-    grid.get(i).a_addNeighbors();
-  }
   
 }
 Boolean finished = false;
@@ -58,7 +41,7 @@ Boolean isgenerated = false;
 
 void draw(){
   //background(51);
-  println(frameRate);
+  //println(frameRate);
   
 
    //frameRate(1);
@@ -97,7 +80,7 @@ void draw(){
          finished = true;
        }
       counter++;
-      println(current.i,current.j);
+      //println(current.i,current.j);
       //println(counter,finished);
    }while (!finished);
    //} *end of for(int s = 0; s < 10; s++)
@@ -113,69 +96,10 @@ void draw(){
          isgenerated = true;
       //}
     }
-    //*A star ---------------------------------------------
-    if(USEASTAR){
-      if (openset.size() > 0){
-        int lowestIndex = 0;
-        for (int i = 0; i < openset.size(); i++){
-          if(openset.get(i).f < openset.get(lowestIndex).f){
-            lowestIndex = i;
-          }
-        }
-        
-       Cell a_current = openset.get(lowestIndex);
-       
-       if (a_current == end){
 
-         println("Done!");
-       }
-       
-       openset.remove(a_current);
-       closedset.add(a_current);
-       
-       for (int i = 0; i < a_current.a_neighbors.size(); i++){
-         Cell neighbor = a_current.a_neighbors.get(i);
-         if(!closedset.contains(neighbor)){
-           int tmpg = a_current.g + 1;
-           if (openset.contains(neighbor)){
-             if(tmpg < neighbor.g){
-               neighbor.g = tmpg;
-             }
-           } else {
-             neighbor.g = tmpg;
-             openset.add(neighbor);
-           }
-           //Core Algorithm
-           neighbor.h = heuristic(neighbor,end);
-           neighbor.f = neighbor.g + neighbor.h;
-           neighbor.previous = current;
-             
-         }
-       }
-       
-      } else {
-        //nosolution
-      }
+     
   
-      for (int i = 0; i < closedset.size(); i++){
-        grid.get(i).a_col = color(255,0,0,255);
-        grid.get(i).a_show();
-      }
-      for (int i = 0; i < openset.size(); i++){
-        grid.get(i).a_col = color(0,255,0,255);
-        grid.get(i).a_show();      
-      }
-       Cell temp = current;
-       path.add(temp);
-       while(temp.previous != null){
-         path.add(temp.previous);
-         temp = temp.previous;
-       }
-      for (int i = 0; i < path.size(); i++){
-        grid.get(i).a_col = color(200,0,0,255);
-        grid.get(i).a_show();      
-      }
-    }
+    
 
     
   
@@ -183,7 +107,9 @@ void draw(){
     mousePressed();
     click = false;
   }
-  println(isgenerated);
+  println("Maze Generated!");
+  save("maze.png");
+  exit();
   noLoop();
 }
 float heuristic(Cell a, Cell b){
@@ -257,30 +183,8 @@ class Cell
       return null;
     }
     
-  }
-  void a_addNeighbors(){
-    
-    if(index(i, j-1) != -1){
-      Cell top = grid.get(index(i, j-1));
-      a_neighbors.add(top);
-      
-    }
-    if(index(i + 1, j) != -1){
-      Cell right = grid.get(index(i + 1, j));
-      a_neighbors.add(right);
-      
-    }
-    if(index(i, j+1) != -1){
-      Cell bottom = grid.get(index(i, j+1));
-      a_neighbors.add(bottom);
-      
-    }
-    if(index(i - 1, j) != -1){
-      Cell left = grid.get(index(i - 1, j));
-      a_neighbors.add(left);
-      
-    }
-  }
+  
+}
   void highlight(){
     int x = this.i*w;
     int y = this.j*w;
@@ -313,14 +217,7 @@ class Cell
     }
     
   }
-  //A* show
-  void a_show(){
-    int x = this.i * w;
-    int y = this.j * w;
-    fill(this.a_col);
-    noStroke();
-    rect(x,y, w - 2, w - 2);
-  }
+
 }
 
 int index(int i, int j){
