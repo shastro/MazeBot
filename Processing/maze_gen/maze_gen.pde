@@ -2,7 +2,7 @@ ArrayList<Cell> grid;
 ArrayList<Cell> stack;
 
 
-int w = 30; //Defines size of cell in pixels
+int w = 10; //Defines size of cell in pixels
 int cols;
 int rows;
 Boolean click = false;
@@ -93,7 +93,7 @@ void draw(){
     mousePressed();
     click = false;
   }
-  println("Maze Generated!");
+  println("w");
   save("maze.png");
   exit();
   noLoop();
