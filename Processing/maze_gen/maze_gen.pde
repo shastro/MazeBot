@@ -2,7 +2,7 @@ ArrayList<Cell> grid;
 ArrayList<Cell> stack;
 
 
-int w = 3; //Defines size of cell in pixels
+int w = 30; //Defines size of cell in pixels
 int cols;
 int rows;
 Boolean click = false;
@@ -27,8 +27,9 @@ void setup(){
       grid.add(new Cell(i,j));
     }
   }
-  int r = int(random(grid.size()-1));
-  //int r = 0;
+  // To Create Full Maze set R to zero, to get partial maze give r a random value
+  //int r = int(random(grid.size()-1));
+  int r = 0;
   current = grid.get(r);
   
   
@@ -43,33 +44,18 @@ void draw(){
   //background(51);
   //println(frameRate);
   
-
-   //frameRate(1);
    do{ 
-       //Use When visualizing slowly instead of generating
-      //for (int i = 0; i < grid.size(); i++){
-        //if(grid.get(i).visited){
-          //grid.get(i).show();
-        //}
-      //}
-      
-      //for(int s = 0; s < 10; s++){ This is for creating more speed when visualizing more slowly
-      
-      //for (int i = 0; i < grid.size(); i++){ Old Functionality
-         //grid.get(i).show();
-        
-      //}
       current.visited = true;
 
-      if (!finished){
-        current.highlight();
-      }
+      //if (!finished){
+        //current.highlight();
+      //}
       Cell next = current.checkNeighbors();
       if (next != null){
         next.visited = true;
         stack.add(current);
         removeWalls(current, next);
-        //current.col = color(255,255,255,101);
+        //current.col = color(255,255,255,101); //Highlight Parts where the current had to backtrack
         current = next;
         
       } else if (stack.size() > 0){
