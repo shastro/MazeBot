@@ -8,7 +8,7 @@ ArrayList<Cell> grid;
 ArrayList<Cell> stack;
 
 
-int w = 10; //Defines default size of cell in pixels
+int w = 15; //Defines default size of cell in pixels
 int cols;
 int rows;
 Boolean click = false;
@@ -78,7 +78,7 @@ void draw(){
       //println(current.i,current.j);
       //println(counter,finished);
    }while (!finished);
-   //} *end of for(int s = 0; s < 10; s++)
+
    
     if(!isgenerated){
       for (int i = 0; i < grid.size(); i++){
@@ -92,7 +92,10 @@ void draw(){
       //}
     }
   println("Maze Generated with size " + w);
-  save("maze.png");
+  //Image Saving and Crop
+  PImage outIMG;
+  outIMG = get(0,0, cols*w, rows*w);
+  outIMG.save("maze.png");
   exit();
   noLoop();
 }
@@ -107,13 +110,7 @@ class Cell
   Boolean[] walls;
   Boolean visited;
   color col;
-  //A star vars
-  float f = 0;
-  int g = 0;
-  float h = 0;
-  color a_col;
-  ArrayList<Cell> a_neighbors = new ArrayList<Cell>();
-  Cell previous = null;
+
   
   Cell(int i, int j){
     this.i = i;
@@ -122,14 +119,8 @@ class Cell
     this.visited = false;
     this.col = color(0,255,255,0);
   }
-  Cell(int i, int j, color a_col){ //Constructor Overloading
-    this.i = i;
-    this.j = j;
-    this.a_col = a_col;
-    walls = new Boolean[]{true,true,true,true};
-    this.visited = false;
-    this.col = color(0,255,255,0);
-  }
+
+  /* Checks neighbors and returns next cell */
   Cell checkNeighbors(){
     ArrayList<Cell> neighbors = new ArrayList<Cell>();
     
@@ -180,6 +171,7 @@ class Cell
     int x = this.i * w;
     int y = this.j * w;
     stroke(255);
+    strokeWeight(w/10);
     
      
     if(walls[0]){

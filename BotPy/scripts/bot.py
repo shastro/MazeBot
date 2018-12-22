@@ -51,9 +51,8 @@ async def on_message(message):
 
     if "!maze" in message.content.lower():
 
-        await message.channel.send("Generating Maze...")
         await evaluate_command(message)
-
+        await message.channel.send("Generating Maze...")
         # Bot Communicates with discord, and cleans up maze.png
         mazefile = discord.File(rf"{abs_path}\maze.png", filename="maze.png")
         await message.channel.send(file=mazefile)
@@ -65,7 +64,10 @@ async def on_message(message):
         await message.channel.send("Goodbye")
         await client.close()
 
-# Handles !maze Command execution based upon msg content
+'''
+Handles !maze Command execution based upon message.content
+
+'''
 
 
 async def evaluate_command(message):
@@ -73,7 +75,10 @@ async def evaluate_command(message):
     match = mz_format.search(message.content.lower())
 
     if match.group(2) != None:
-        p = subprocess.Popen(['processing-java', f'--sketch={abs_path}', '--run', f'{match.group(2)}'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        if int(match.group(2)) >= 2 and int(match.group(2)) <= 200:
+            p = subprocess.Popen(['processing-java', f'--sketch={abs_path}', '--run', f'{match.group(2)}'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        else:
+            await message.channel.send("Input Error: -s=Num, Num must be between 2 and 200")
         # print(p.stdout.decode('utf-8'))
     else:
         p = subprocess.Popen(['processing-java', f'--sketch={abs_path}', '--run'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
