@@ -4,8 +4,9 @@ Main Script for running the bot with discord.py
 @bug none
 
 @todo Implement Better Command Parsing, as well as more commands
-Implement help
+Implement !help command
 Refactor conditional if !maze in msg, instead I'd like to use the regex
+Implement Error Checking on match.group(1) should print an error if value not between 3 and 200
 '''
 import discord
 import subprocess
@@ -35,7 +36,7 @@ client = discord.Client()
 abs_path = os.path.abspath(r"..\..\Processing\maze_gen")
 
 # Regex for !maze command
-mz_format = re.compile(r'^!maze\s?(\d{1,2})?')
+mz_format = re.compile(r'^!maze\s?(\d{1,3})?')
 
 
 @client.event
@@ -65,7 +66,6 @@ async def on_message(message):
 
 async def evaluate_command(msg):
 
-    mz_format = re.compile(r'^!maze\s?(\d{1,2})?')
     match = mz_format.search(msg)
 
     if match.group(1) != None:

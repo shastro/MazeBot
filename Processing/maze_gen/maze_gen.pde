@@ -1,8 +1,14 @@
+/*
+
+ @todo, Refactor and clean up code organization
+        Document Code
+*/
+
 ArrayList<Cell> grid;
 ArrayList<Cell> stack;
 
 
-int w = 10; //Defines size of cell in pixels
+int w = 10; //Defines default size of cell in pixels
 int cols;
 int rows;
 Boolean click = false;
