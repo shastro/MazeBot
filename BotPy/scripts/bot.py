@@ -14,6 +14,7 @@ import os
 import re
 import time as t
 
+TIME_OUT = 10  # Timeout for command to break (seconds)
 
 # https://discordapp.com/api/oauth2/authorize?client_id=525510742770843678&permissions=100416&scope=bot
 # BOT URL, Replace client_id and permissions with your own
@@ -36,7 +37,7 @@ client = discord.Client()
 abs_path = os.path.abspath(r"..\..\Processing\maze_gen")
 
 # Regex for !maze command
-mz_format = re.compile(r'^!maze\s?(-s\d{1,3})?')
+mz_format = re.compile(r'^!maze\s?(-s=)?(\d{1,3})?')
 
 
 @client.event
@@ -49,8 +50,11 @@ async def on_message(message):
     print(f"{message.channel}: {message.author.name}: {message.content}")
 
     if "!maze" in message.content.lower():
+
         await message.channel.send("Generating Maze...")
-        await evaluate_command(message.content.lower())
+        await evaluate_command(message)
+
+        # Bot Communicates with discord, and cleans up maze.png
         mazefile = discord.File(rf"{abs_path}\maze.png", filename="maze.png")
         await message.channel.send(file=mazefile)
         os.remove(rf"{abs_path}\maze.png")
@@ -64,16 +68,21 @@ async def on_message(message):
 # Handles !maze Command execution based upon msg content
 
 
-async def evaluate_command(msg):
+async def evaluate_command(message):
 
-    match = mz_format.search(msg)
+    match = mz_format.search(message.content.lower())
 
-    if match.group(1) != None:
-        p = subprocess.Popen(['processing-java', f'--sketch={abs_path}', '--run', f'{match.group(1)}'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    if match.group(2) != None:
+        p = subprocess.Popen(['processing-java', f'--sketch={abs_path}', '--run', f'{match.group(2)}'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         # print(p.stdout.decode('utf-8'))
     else:
-        p = subprocess.Popen(['processing-java', f'--sketch={abs_path}', '--run', f'{match.group(1)}'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        p = subprocess.Popen(['processing-java', f'--sketch={abs_path}', '--run'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         # print(p.stdout.decode('utf-8'))
-    p.wait()  # Wait for subprocess to finish before proceeding
-
+    # Timeout Handling
+    try:
+        p.wait(TIME_OUT)
+    except subprocess.TimeoutExpired:
+        p.kill()
+        print("Subprocess Timeout, Error!")
+        await message.channel.send("Internal Error: TIMEOUT, Try Again")
 client.run(BOT_TOKEN)

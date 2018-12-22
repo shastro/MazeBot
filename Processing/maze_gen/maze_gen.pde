@@ -47,7 +47,6 @@ void setup(){
 }
 Boolean finished = false;
 int counter = 0;
-String mode = "gen";
 Boolean isgenerated = false;
 
 void draw(){
@@ -92,17 +91,6 @@ void draw(){
          isgenerated = true;
       //}
     }
-
-     
-  
-    
-
-    
-  
-  if (click){
-    mousePressed();
-    click = false;
-  }
   println("Maze Generated with size " + w);
   save("maze.png");
   exit();
@@ -241,9 +229,4 @@ void removeWalls(Cell cur, Cell nxt){
     cur.walls[2] = false;
     nxt.walls[0] = false;
   }
-}
-
-void mousePressed(){
-  int r = int(random(1000));
-  saveFrame("snip" + r +".png");
 }
