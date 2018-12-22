@@ -10,6 +10,7 @@ import discord
 import subprocess
 import os
 import re
+import time as t
 
 
 # https://discordapp.com/api/oauth2/authorize?client_id=525510742770843678&permissions=100416&scope=bot
@@ -46,28 +47,33 @@ async def on_ready():
 async def on_message(message):
     print(f"{message.channel}: {message.author.name}: {message.content}")
 
-    if "!maze" == message.content.lower():
+    if "!maze" in message.content.lower():
         await message.channel.send("Generating Maze...")
-        p = subprocess.Popen(f'processing-java --sketch="{abs_path}" --run', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-        #out = p.stdout.read().split('\r\n')
-        # print(out)
+        await evaluate_command(message.content.lower())
         mazefile = discord.File(rf"{abs_path}\maze.png", filename="maze.png")
         await message.channel.send(file=mazefile)
+        os.remove(rf"{abs_path}\maze.png")
 
     # if "!help" == message.content.lower():
 
-    if "!end" == message.content.lower():
+    if "!quit" == message.content.lower():
         await message.channel.send("Goodbye")
         await client.close()
 
+# Handles Command execution based upon msg content
 
-def evaluate_command(msg):
+
+async def evaluate_command(msg):
 
     mz_format = re.compile(r'^!maze\s?(\d{1,2})?')
-    matches = mz_format.finditer(msg)
+    match = mz_format.search(msg)
 
-    for match in matches:
-        print(match.group(0))
-
+    if match.group(1) != None:
+        p = subprocess.Popen(f'processing-java --sketch="{abs_path}" --run {match.group(1)}', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        # print(p.stdout.decode('utf-8'))
+    else:
+        p = subprocess.Popen(f'processing-java --sketch="{abs_path}" --run', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        # print(p.stdout.decode('utf-8'))
+    p.wait()
 
 client.run(BOT_TOKEN)

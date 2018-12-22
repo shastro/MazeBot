@@ -97,7 +97,7 @@ void draw(){
     mousePressed();
     click = false;
   }
-  println(w);
+  println("Maze Generated with size " + w);
   save("maze.png");
   exit();
   noLoop();
