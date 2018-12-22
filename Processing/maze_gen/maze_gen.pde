@@ -13,6 +13,11 @@ Cell end;
 
 void setup(){
   //size(1080, 2220); //Phone
+  
+  if (args != null){
+    w = int(args[0]);
+  }
+  
   size(1000,1000);
   colorMode(HSB);
   background(51);
@@ -20,7 +25,6 @@ void setup(){
   rows = floor(height/w);
   grid = new ArrayList<Cell>();
   stack = new ArrayList<Cell>();
-
   /*Grid init*/
   for (int j = 0; j < rows; j++){
     for(int i= 0; i < cols; i++){
@@ -93,7 +97,7 @@ void draw(){
     mousePressed();
     click = false;
   }
-  println("w");
+  println(w);
   save("maze.png");
   exit();
   noLoop();
