@@ -21,10 +21,10 @@ import time as t
 # Import "Secret" data
 # --NOTE--
 # secrets.txt should contain only two lines, the first being the bot token, and the second being the client secret
-secrets = open('secrets.txt', 'r')
-BOT_TOKEN = secrets.readline()
-CLIENT_SECRET = secrets.readline()
-secrets.close()
+with open('secrets.txt', 'r') as secrets:
+    BOT_TOKEN = secrets.readline()
+    CLIENT_SECRET = secrets.readline()
+
 
 # Stripping Trailing Newline char from BOT_TOKEN
 BOT_TOKEN = BOT_TOKEN.rstrip()
@@ -36,7 +36,7 @@ client = discord.Client()
 abs_path = os.path.abspath(r"..\..\Processing\maze_gen")
 
 # Regex for !maze command
-mz_format = re.compile(r'^!maze\s?(\d{1,3})?')
+mz_format = re.compile(r'^!maze\s?(-s\d{1,3})?')
 
 
 @client.event
@@ -69,10 +69,10 @@ async def evaluate_command(msg):
     match = mz_format.search(msg)
 
     if match.group(1) != None:
-        p = subprocess.Popen(f'processing-java --sketch="{abs_path}" --run {match.group(1)}', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        p = subprocess.Popen(['processing-java', f'--sketch={abs_path}', '--run', f'{match.group(1)}'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         # print(p.stdout.decode('utf-8'))
     else:
-        p = subprocess.Popen(f'processing-java --sketch="{abs_path}" --run', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        p = subprocess.Popen(['processing-java', f'--sketch={abs_path}', '--run', f'{match.group(1)}'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         # print(p.stdout.decode('utf-8'))
     p.wait()  # Wait for subprocess to finish before proceeding
 
