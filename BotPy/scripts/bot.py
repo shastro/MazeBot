@@ -5,6 +5,7 @@ Main Script for running the bot with discord.py
 
 @todo Implement Better Command Parsing, as well as more commands
 Implement help
+Refactor conditional if !maze in msg, instead I'd like to use the regex
 '''
 import discord
 import subprocess
@@ -33,8 +34,7 @@ client = discord.Client()
 # Windows Path
 abs_path = os.path.abspath(r"..\..\Processing\maze_gen")
 
-# Regex for !maze commands
-
+# Regex for !maze command
 mz_format = re.compile(r'^!maze\s?(\d{1,2})?')
 
 
@@ -54,13 +54,13 @@ async def on_message(message):
         await message.channel.send(file=mazefile)
         os.remove(rf"{abs_path}\maze.png")
 
-    # if "!help" == message.content.lower():
+    # if "!help" == message.content.lower(): #Todo
 
     if "!quit" == message.content.lower():
         await message.channel.send("Goodbye")
         await client.close()
 
-# Handles Command execution based upon msg content
+# Handles !maze Command execution based upon msg content
 
 
 async def evaluate_command(msg):
@@ -74,6 +74,6 @@ async def evaluate_command(msg):
     else:
         p = subprocess.Popen(f'processing-java --sketch="{abs_path}" --run', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         # print(p.stdout.decode('utf-8'))
-    p.wait()
+    p.wait()  # Wait for subprocess to finish before proceeding
 
 client.run(BOT_TOKEN)
