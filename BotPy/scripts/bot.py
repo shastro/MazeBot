@@ -37,7 +37,7 @@ client = discord.Client()
 abs_path = os.path.abspath(r"..\..\Processing\maze_gen")
 
 # Regex for !maze command
-mz_format = re.compile(r'^!maze\s?(-s=)?(\d{1,3})?')
+mz_format = re.compile(r'^!maze\s(-s=)?(\d{1,3})?\s?(-i)?')
 
 
 @client.event
@@ -49,7 +49,7 @@ async def on_ready():
 async def on_message(message):
     print(f"{message.channel}: {message.author.name}: {message.content}")
 
-    if "!maze" in message.content.lower():
+    if "!maze" == message.content.lower()[0:5]:
 
         await evaluate_command(message)
         await message.channel.send("Generating Maze...")
@@ -58,7 +58,8 @@ async def on_message(message):
         await message.channel.send(file=mazefile)
         os.remove(rf"{abs_path}\maze.png")
 
-    # if "!help" == message.content.lower(): #Todo
+    if "!help" == message.content.lower():  # Todo
+        await message.channel.send("```Usage \"!maze -s=NUM -i\"\n-s=NUM defines the resolution of the maze grid, the explicit \"-s=\" is optional\n-i sets the Incomplete flag, creates a maze that does not fill every cell```")
 
     if "!quit" == message.content.lower():
         await message.channel.send("Goodbye")
@@ -72,17 +73,29 @@ Handles !maze Command execution based upon message.content
 
 async def evaluate_command(message):
 
+    # Search Using mz_formate regex
     match = mz_format.search(message.content.lower())
 
-    if match.group(2) != None:
-        if int(match.group(2)) >= 2 and int(match.group(2)) <= 200:
-            p = subprocess.Popen(['processing-java', f'--sketch={abs_path}', '--run', f'{match.group(2)}'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-        else:
-            await message.channel.send("Input Error: -s=Num, Num must be between 2 and 200")
-        # print(p.stdout.decode('utf-8'))
-    else:
-        p = subprocess.Popen(['processing-java', f'--sketch={abs_path}', '--run'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-        # print(p.stdout.decode('utf-8'))
+    # Input Processing
+
+    # Default Args
+    s = 15  # Size
+    incomplete = 0  # Incomplete flag (-i) Bool, 0 for False, 1 for True
+
+    #(-s=) Flag
+    if match != None:
+        if match.group(2) != None:
+            if int(match.group(2)) >= 2 and int(match.group(2)) <= 200:
+                s = int(match.group(2))
+            else:
+                await message.channel.send("Input Error: -s=Num, Num must be between 2 and 200, using default value of 15")
+        # (-i) Flag
+        if match.group(3) != None:
+            incomplete = 1
+
+    # Launch Subprocess
+    p = subprocess.Popen(['processing-java', f'--sketch={abs_path}', '--run', f'{s}', f'{incomplete}'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+
     # Timeout Handling
     try:
         p.wait(TIME_OUT)
@@ -90,4 +103,7 @@ async def evaluate_command(message):
         p.kill()
         print("Subprocess Timeout, Error!")
         await message.channel.send("Internal Error: TIMEOUT, Try Again")
+
+
+# Run Bot
 client.run(BOT_TOKEN)

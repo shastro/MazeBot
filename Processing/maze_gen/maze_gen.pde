@@ -7,26 +7,31 @@
 ArrayList<Cell> grid;
 ArrayList<Cell> stack;
 
-
-int w = 15; //Defines default size of cell in pixels
+/*Var Initialization as well as default value declaration */
 int cols;
 int rows;
-Boolean click = false;
 Cell current;
 Cell start;
 Cell end;
+int w = 15; //Defines default size of cell in pixels
+boolean incomplete = false;
+color bgcol = color(51,51,51); 
 
 
 void setup(){
-  //size(1080, 2220); //Phone
-  
+  /*COMMAND LINE ARGS*/
   if (args != null){
+    println(args[0],args[1]);
     w = int(args[0]);
+    if(int(args[1]) == 1)
+      incomplete = true;
+    
   }
   
   size(1000,1000);
+  
   colorMode(HSB);
-  background(51);
+  background(bgcol);
   cols = floor(width/w);
   rows = floor(height/w);
   grid = new ArrayList<Cell>();
@@ -37,9 +42,13 @@ void setup(){
       grid.add(new Cell(i,j));
     }
   }
-  // To Create Full Maze set R to zero, to get partial maze give r a random value
-  //int r = int(random(grid.size()-1));
   int r = 0;
+  // To Create Full Maze set R to zero, to get partial maze give r a random value
+  if(incomplete == true){
+    r = int(random(grid.size()-1));
+  }else{
+    r = 0;
+  }
   current = grid.get(r);
   
   
@@ -50,15 +59,13 @@ int counter = 0;
 Boolean isgenerated = false;
 
 void draw(){
-  //background(51);
-  //println(frameRate);
-  
+
    do{ 
       current.visited = true;
 
-      //if (!finished){
-        //current.highlight();
-      //}
+      if (!finished){
+        current.highlight();
+      }
       Cell next = current.checkNeighbors();
       if (next != null){
         next.visited = true;
@@ -94,7 +101,7 @@ void draw(){
   println("Maze Generated with size " + w);
   //Image Saving and Crop
   PImage outIMG;
-  outIMG = get(0,0, cols*w, rows*w);
+  outIMG = get(0,0, cols*w + 1, rows*w + 1);
   outIMG.save("maze.png");
   exit();
   noLoop();

@@ -59,14 +59,18 @@ class Cell
     int x = this.i*w;
     int y = this.j*w;
     noStroke();
-    fill(255,255,130,255);
+    fill(bgcol);
     rect(x,y,w,w);
   }
   void show(){
     int x = this.i * w;
     int y = this.j * w;
     stroke(255);
-    strokeWeight(w/10);
+    if(w > 10){
+      strokeWeight(w/10);
+    }else{
+      strokeWeight(1);
+    }
     
      
     if(walls[0]){
