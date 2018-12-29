@@ -13,7 +13,8 @@ int rows;
 Cell current;
 Cell start;
 Cell end;
-int w = 15; //Defines default size of cell in pixels
+/* User Args */
+int w = 10; //Defines default size of cell in pixels
 boolean incomplete = false;
 color bgcol = color(51,51,51); 
 
@@ -29,8 +30,6 @@ void setup(){
   }
   
   size(1000,1000);
-  
-  colorMode(HSB);
   background(bgcol);
   cols = floor(width/w);
   rows = floor(height/w);
@@ -52,14 +51,15 @@ void setup(){
   current = grid.get(r);
   
   
-  
+
 }
 Boolean finished = false;
 int counter = 0;
 Boolean isgenerated = false;
 
 void draw(){
-
+  //translate(1000,0);
+  //rotate(PI/2);
    do{ 
       current.visited = true;
 

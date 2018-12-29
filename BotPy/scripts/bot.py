@@ -50,9 +50,8 @@ async def on_message(message):
     print(f"{message.channel}: {message.author.name}: {message.content}")
 
     if "!maze" == message.content.lower()[0:5]:
-
-        await evaluate_command(message)
         await message.channel.send("Generating Maze...")
+        await evaluate_command(message)
         # Bot Communicates with discord, and cleans up maze.png
         mazefile = discord.File(rf"{abs_path}\maze.png", filename="maze.png")
         await message.channel.send(file=mazefile)

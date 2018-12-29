@@ -20,7 +20,7 @@ class Cell
     ArrayList<Cell> neighbors = new ArrayList<Cell>();
     
    
-    if(index(i, j-1) != -1){
+    if(index(i, j-1) != -1){ //If not on edge
       Cell top = grid.get(index(i, j-1));
       if(!top.visited){
         neighbors.add(top);
@@ -45,11 +45,34 @@ class Cell
       }
     }
     
-    
+    /*
     if (neighbors.size() > 0){
       int r = floor(random(0, neighbors.size()));
       return neighbors.get(r);
     } else {
+      return null;
+    }
+    */
+    if(neighbors.size() > 0){
+      float r = random(0,1);
+      int r2 = floor(random(0, neighbors.size()));
+      //println(r);
+      if (r <= 0.25 && neighbors.size() > 0){
+        return neighbors.get(0);
+      } else if (r >= 0.25 && r <= 0.5 && neighbors.size() > 1){
+        return neighbors.get(1);
+      } else if (r >= 0.50 && r <= 0.75 && neighbors.size() > 2){
+        return neighbors.get(2);
+      } else if (r >= 0.75 && r <= 1 && neighbors.size() > 3){
+        return neighbors.get(3);
+      } else {
+        println("yes");
+        println(r);
+        println(r2);
+        println(neighbors.size());
+        return neighbors.get(r2);
+      }
+    }else{
       return null;
     }
     
